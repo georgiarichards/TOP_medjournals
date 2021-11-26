@@ -25,39 +25,106 @@ df1=pd.read_csv("TOP_medj_totals.csv",thousands=',')
 df1.head()
 
 
+# In[3]:
+
+
+# adding new columns to prepare for analysis - summing total score 
+sum_total = df1['Citation'] + df1['Data transparency'] + df1['Analytic methods (Code)'] + df1['Materials'] + df1['Design & analysis'] + df1['Study prereg'] + df1['Analysis prereg'] + df1['Replication'] + df1['TOP signatory'] + df1['Reg reports'] + df1['OS badges']
+df1['grand_total'] = sum_total
+
+
+# In[4]:
+
+
+sum_extras = df1['TOP signatory']+df1['Reg reports']+df1['OS badges']
+df1['extra_total'] = sum_extras
+
+
+# In[5]:
+
+
+sum_total_TOP = df1['Citation'] + df1['Data transparency'] + df1['Analytic methods (Code)'] + df1['Materials'] + df1['Design & analysis'] + df1['Study prereg'] + df1['Analysis prereg'] + df1['Replication'] 
+df1['TOP_8'] = sum_total_TOP
+
+
+# In[6]:
+
+
+sum_total_COI = df1['COI1'] + df1['COI2'] + df1['COI3'] + df1['COI4']
+df1['COI_total'] = sum_total_COI
+df1.head()
+
+
 # # Analysis of total score for journal policies (TOP score + 3 extra items)
 
-# In[3]:
+# In[7]:
 
 
 # descriptive stats for grand total score (TOP + extras), out of 29 
 df1.groupby('year', as_index=False).agg({"grand_total": "describe"})
 
 
-# In[4]:
+# In[8]:
 
 
+# Calculating the difference in total scores pre-pandemic (Feb 2020) and 'during' (May 2021)
 table=pd.pivot_table(df1,index='Journal',columns='year',values='grand_total',aggfunc='mean')
 table['diff']=table[2021]-table[2020]
 table
 
 
-# In[5]:
+# In[9]:
 
 
+# examining what's driving change in scores - how many extra items, out of 5 
+# (i.e. TOP signatory: no=0, yes=1; registered reports: no=0, yes=2; and open science badges: no=0, yes=2)
 table=pd.pivot_table(df1,index='Journal',columns='year',values='extra_total',aggfunc='mean')
 table['diff']=table[2021]-table[2020]
 table
 
 
-# In[20]:
+# In[10]:
+
+
+# determining whether any new TOP signatories (no=0, yes=1)
+table=pd.pivot_table(df1,index='Journal',columns='year',values='TOP signatory',aggfunc='mean')
+table['diff']=table[2021]-table[2020]
+table
+
+
+# In[11]:
+
+
+# determining whether any journals have started registered reports (no=0, yes=2) since Feb 2020 audit
+table=pd.pivot_table(df1,index='Journal',columns='year',values='Reg reports',aggfunc='mean')
+table['diff']=table[2021]-table[2020]
+table
+
+
+# In[12]:
+
+
+# determining whether any journals have implemented open science badges (no=0, yes=2) since Feb 2020 audit
+table=pd.pivot_table(df1,index='Journal',columns='year',values='OS badges',aggfunc='mean')
+table['diff']=table[2021]-table[2020]
+table
+
+
+# In[13]:
+
+
+df2 = df1.sort_values(by=['grand_total', 'Journal'],
+                      ascending=[False, True])
+df2.head()
+
+
+# In[14]:
 
 
 # plotting the grand total score (TOP 8 + 3 extras) for 2020 & 2021, score out of 29 
-
 plt.figure(figsize=(10,12))
 sns.set_color_codes("colorblind")
-ax = sns.barplot(data=df, x="grand_total", y="Journal", hue="year")
+ax = sns.barplot(data=df2, x="grand_total", y="Journal", hue="year")
 plt.xlabel('Total policy scores, out of 29', fontsize=15)
 plt.xticks(fontsize=15)
 plt.ylabel('Journals', fontsize=15)
@@ -71,14 +138,14 @@ plt.savefig("fig_totalTOP_20-21.png", dpi=600)
 
 # # Analysis of TOP guidelines, 8 standards 
 
-# In[5]:
+# In[15]:
 
 
-# descriptive stats for all variables - due to volume of data, only showing in full for total TOP score, out of 24 
-df.groupby('year').describe()
+# descriptive stats for total TOP score (8 standards), out of 24
+df1.groupby('year', as_index=False).agg({"TOP_8": "describe"})
 
 
-# In[6]:
+# In[16]:
 
 
 table=pd.pivot_table(df1,index='Journal',columns='year',values='TOP_8',aggfunc='mean')
@@ -86,14 +153,23 @@ table['diff']=table[2021]-table[2020]
 table
 
 
-# In[7]:
+# In[17]:
+
+
+# sorting the order of the journals 
+df3 = df1.sort_values(by=['TOP_8', 'Journal'],
+                      ascending=[False, True])
+df3.head()
+
+
+# In[18]:
 
 
 # plotting the total TOP score for 2020 & 2021
 
 plt.figure(figsize=(10,12))
 sns.set_color_codes("colorblind")
-ax = sns.barplot(data=df1, x="TOP_8", y="Journal", hue="year")
+ax = sns.barplot(data=df3, x="TOP_8", y="Journal", hue="year")
 plt.xlabel('Total TOP scores, out of 24', fontsize=15)
 plt.xticks(fontsize=15)
 plt.ylabel('Journals', fontsize=15)
@@ -105,18 +181,18 @@ ax.set(xlim=(0, 24))
 plt.savefig("fig_TOP_20-21.png", dpi=600)
 
 
-# In[26]:
+# In[19]:
 
 
 f, ax = plt.subplots(figsize=(13, 16))
 
 # Plot grand total
 sns.set_color_codes("pastel")
-sns.barplot(data=df, x="grand_total", y="Journal", hue="year", color="b")
+sns.barplot(data=df2, x="grand_total", y="Journal", hue="year", color="b")
 
 # Plot TOP 8 standards
 sns.set_color_codes("colorblind")
-sns.barplot(data=df, x="TOP_8", y="Journal", hue="year", color="b")
+sns.barplot(data=df2, x="TOP_8", y="Journal", hue="year", color="b")
 
 # Add a legend and informative axis label
 ax.set(xlim=(0, 29))
@@ -132,14 +208,14 @@ plt.savefig("TOPcombined_20-21.png", dpi=600)
 
 # # Descriptive stats for each measure of TOP standards 
 
-# In[9]:
+# In[20]:
 
 
-# Citation summary  
+# Citation summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Citation": "describe"})
 
 
-# In[10]:
+# In[21]:
 
 
 # difference in citation scores 
@@ -148,14 +224,14 @@ table['diff']=table[2021]-table[2020]
 table
 
 
-# In[11]:
+# In[22]:
 
 
-# Data transparency summary  
+# Data transparency summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Data transparency": "describe"})
 
 
-# In[12]:
+# In[23]:
 
 
 # difference in Data transparency scores 
@@ -164,30 +240,30 @@ table['diff']=table[2021]-table[2020]
 table
 
 
-# In[14]:
+# In[25]:
 
 
-# Analystic methods (code) summary  
+# Analystic methods (code) summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Analytic methods (Code)": "describe"})
 
 
-# In[15]:
+# In[26]:
 
 
-# difference in Analystic methods (code) scores 
+# difference in Analytical methods (code) scores 
 table=pd.pivot_table(df1,index='Journal',columns='year',values='Analytic methods (Code)',aggfunc='mean')
 table['diff']=table[2021]-table[2020]
 table
 
 
-# In[16]:
+# In[27]:
 
 
-# Materials summary  
+# Materials summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Materials": "describe"})
 
 
-# In[17]:
+# In[28]:
 
 
 # difference in Materials scores 
@@ -196,14 +272,14 @@ table['diff']=table[2021]-table[2020]
 table
 
 
-# In[18]:
+# In[29]:
 
 
-# Design & analysis summary  
+# Design & analysis summary - a score out of 0 to 3
 df1.groupby('year', as_index=False).agg({"Design & analysis": "describe"})
 
 
-# In[19]:
+# In[30]:
 
 
 # difference in Design & analysis scores 
@@ -212,14 +288,14 @@ table['diff']=table[2021]-table[2020]
 table
 
 
-# In[20]:
+# In[31]:
 
 
-# Study prereg summary  
+# Study prereg summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Study prereg": "describe"})
 
 
-# In[21]:
+# In[32]:
 
 
 # difference in Study prereg scores 
@@ -228,14 +304,14 @@ table['diff']=table[2021]-table[2020]
 table
 
 
-# In[22]:
+# In[33]:
 
 
-# Analysis prereg summary  
+# Analysis prereg summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Analysis prereg": "describe"})
 
 
-# In[23]:
+# In[34]:
 
 
 # difference in Analysis prereg scores 
@@ -244,14 +320,14 @@ table['diff']=table[2021]-table[2020]
 table
 
 
-# In[24]:
+# In[35]:
 
 
-# Replication summary  
+# Replication summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Replication": "describe"})
 
 
-# In[25]:
+# In[36]:
 
 
 # difference in Replication scores 
@@ -262,21 +338,30 @@ table
 
 # # Analysis of COI scores from the International Committee of Medical Journal Editors (ICMJE) disclosure form 
 
-# In[7]:
+# In[38]:
 
 
 # descriptive stats for COI total score, out of 4
-df.groupby('year', as_index=False).agg({"COI_total": "describe"})
+df1.groupby('year', as_index=False).agg({"COI_total": "describe"})
 
 
-# In[22]:
+# In[43]:
+
+
+# sorting the order of the journals 
+df4 = df1.sort_values(by=['COI_total', 'Journal'],
+                      ascending=[False, True])
+df4.head()
+
+
+# In[44]:
 
 
 # plotting the total COI score for 2020 & 2021, out of 4 points 
 
 plt.figure(figsize=(10,12))
 sns.set_color_codes("colorblind")
-ax = sns.barplot(data=df, x="COI_total", y="Journal", hue="year")
+ax = sns.barplot(data=df4, x="COI_total", y="Journal", hue="year")
 plt.xlabel('Total COI scores, out of 4', fontsize=15)
 plt.xticks(fontsize=15)
 plt.ylabel('Journals', fontsize=15)
