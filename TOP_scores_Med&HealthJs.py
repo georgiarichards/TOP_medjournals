@@ -29,7 +29,7 @@ df1.head()
 
 
 # adding new columns to prepare for analysis - summing total score 
-sum_total = df1['Citation'] + df1['Data transparency'] + df1['Analytic methods (Code)'] + df1['Materials'] + df1['Design & analysis'] + df1['Study prereg'] + df1['Analysis prereg'] + df1['Replication'] + df1['TOP signatory'] + df1['Reg reports'] + df1['OS badges']
+sum_total = df1['Data citation'] + df1['Data transparency'] + df1['Code transparency'] + df1['Materials transparency'] + df1['Design & analysis'] + df1['Study prereg'] + df1['Analysis prereg'] + df1['Replication'] + df1['TOP signatory'] + df1['Reg reports'] + df1['OS badges']
 df1['grand_total'] = sum_total
 
 
@@ -43,7 +43,7 @@ df1['extra_total'] = sum_extras
 # In[5]:
 
 
-sum_total_TOP = df1['Citation'] + df1['Data transparency'] + df1['Analytic methods (Code)'] + df1['Materials'] + df1['Design & analysis'] + df1['Study prereg'] + df1['Analysis prereg'] + df1['Replication'] 
+sum_total_TOP = df1['Data citation'] + df1['Data transparency'] + df1['Code transparency'] + df1['Materials transparency'] + df1['Design & analysis'] + df1['Study prereg'] + df1['Analysis prereg'] + df1['Replication'] 
 df1['TOP_8'] = sum_total_TOP
 
 
@@ -162,7 +162,7 @@ df3 = df1.sort_values(by=['TOP_8', 'Journal'],
 df3.head()
 
 
-# In[18]:
+# In[19]:
 
 
 # plotting the total TOP score for 2020 & 2021
@@ -181,7 +181,7 @@ ax.set(xlim=(0, 24))
 plt.savefig("fig_TOP_20-21.png", dpi=600)
 
 
-# In[19]:
+# In[20]:
 
 
 f, ax = plt.subplots(figsize=(13, 16))
@@ -208,30 +208,30 @@ plt.savefig("TOPcombined_20-21.png", dpi=600)
 
 # # Descriptive stats for each measure of TOP standards 
 
-# In[20]:
-
-
-# Citation summary - a score out of 0 to 3 
-df1.groupby('year', as_index=False).agg({"Citation": "describe"})
-
-
 # In[21]:
 
 
+# Citation summary - a score out of 0 to 3 
+df1.groupby('year', as_index=False).agg({"Data citation": "describe"})
+
+
+# In[22]:
+
+
 # difference in citation scores 
-table=pd.pivot_table(df1,index='Journal',columns='year',values='Citation',aggfunc='mean')
+table=pd.pivot_table(df1,index='Journal',columns='year',values='Data citation',aggfunc='mean')
 table['diff']=table[2021]-table[2020]
 table
 
 
-# In[22]:
+# In[23]:
 
 
 # Data transparency summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Data transparency": "describe"})
 
 
-# In[23]:
+# In[24]:
 
 
 # difference in Data transparency scores 
@@ -244,14 +244,14 @@ table
 
 
 # Analystic methods (code) summary - a score out of 0 to 3 
-df1.groupby('year', as_index=False).agg({"Analytic methods (Code)": "describe"})
+df1.groupby('year', as_index=False).agg({"Code transparency": "describe"})
 
 
 # In[26]:
 
 
 # difference in Analytical methods (code) scores 
-table=pd.pivot_table(df1,index='Journal',columns='year',values='Analytic methods (Code)',aggfunc='mean')
+table=pd.pivot_table(df1,index='Journal',columns='year',values='Code transparency',aggfunc='mean')
 table['diff']=table[2021]-table[2020]
 table
 
@@ -260,14 +260,14 @@ table
 
 
 # Materials summary - a score out of 0 to 3 
-df1.groupby('year', as_index=False).agg({"Materials": "describe"})
+df1.groupby('year', as_index=False).agg({"Materials transparency": "describe"})
 
 
 # In[28]:
 
 
 # difference in Materials scores 
-table=pd.pivot_table(df1,index='Journal',columns='year',values='Materials',aggfunc='mean')
+table=pd.pivot_table(df1,index='Journal',columns='year',values='Materials transparency',aggfunc='mean')
 table['diff']=table[2021]-table[2020]
 table
 
@@ -338,14 +338,14 @@ table
 
 # # Analysis of COI scores from the International Committee of Medical Journal Editors (ICMJE) disclosure form 
 
-# In[38]:
+# In[37]:
 
 
 # descriptive stats for COI total score, out of 4
 df1.groupby('year', as_index=False).agg({"COI_total": "describe"})
 
 
-# In[43]:
+# In[38]:
 
 
 # sorting the order of the journals 
@@ -354,7 +354,7 @@ df4 = df1.sort_values(by=['COI_total', 'Journal'],
 df4.head()
 
 
-# In[44]:
+# In[39]:
 
 
 # plotting the total COI score for 2020 & 2021, out of 4 points 
