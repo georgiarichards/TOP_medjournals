@@ -162,7 +162,7 @@ df3 = df1.sort_values(by=['TOP_8', 'Journal'],
 df3.head()
 
 
-# In[19]:
+# In[18]:
 
 
 # plotting the total TOP score for 2020 & 2021
@@ -188,11 +188,11 @@ f, ax = plt.subplots(figsize=(13, 16))
 
 # Plot grand total
 sns.set_color_codes("pastel")
-sns.barplot(data=df2, x="grand_total", y="Journal", hue="year", color="b")
+sns.barplot(data=df2, x="grand_total", y="Journal", hue="year", color='b')
 
 # Plot TOP 8 standards
 sns.set_color_codes("colorblind")
-sns.barplot(data=df2, x="TOP_8", y="Journal", hue="year", color="b")
+sns.barplot(data=df2, x="TOP_8", y="Journal", hue="year", color='b')
 
 # Add a legend and informative axis label
 ax.set(xlim=(0, 29))
