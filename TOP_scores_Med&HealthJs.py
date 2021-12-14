@@ -215,6 +215,12 @@ plt.savefig("TOPcombined_20-21.png", dpi=600)
 df1.groupby('year', as_index=False).agg({"Data citation": "describe"})
 
 
+# In[4]:
+
+
+df1.groupby('year')['Data citation'].sum()
+
+
 # In[22]:
 
 
@@ -229,6 +235,12 @@ table
 
 # Data transparency summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Data transparency": "describe"})
+
+
+# In[5]:
+
+
+df1.groupby('year')['Data transparency'].sum()
 
 
 # In[24]:
@@ -247,6 +259,12 @@ table
 df1.groupby('year', as_index=False).agg({"Code transparency": "describe"})
 
 
+# In[6]:
+
+
+df1.groupby('year')['Code transparency'].sum()
+
+
 # In[26]:
 
 
@@ -261,6 +279,12 @@ table
 
 # Materials summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Materials transparency": "describe"})
+
+
+# In[7]:
+
+
+df1.groupby('year')['Materials transparency'].sum()
 
 
 # In[28]:
@@ -279,6 +303,12 @@ table
 df1.groupby('year', as_index=False).agg({"Design & analysis": "describe"})
 
 
+# In[8]:
+
+
+df1.groupby('year')['Design & analysis'].sum()
+
+
 # In[30]:
 
 
@@ -293,6 +323,12 @@ table
 
 # Study prereg summary - a score out of 0 to 3 
 df1.groupby('year', as_index=False).agg({"Study prereg": "describe"})
+
+
+# In[9]:
+
+
+df1.groupby('year')['Study prereg'].sum()
 
 
 # In[32]:
@@ -311,6 +347,12 @@ table
 df1.groupby('year', as_index=False).agg({"Analysis prereg": "describe"})
 
 
+# In[10]:
+
+
+df1.groupby('year')['Analysis prereg'].sum()
+
+
 # In[34]:
 
 
@@ -327,6 +369,12 @@ table
 df1.groupby('year', as_index=False).agg({"Replication": "describe"})
 
 
+# In[11]:
+
+
+df1.groupby('year')['Replication'].sum()
+
+
 # In[36]:
 
 
@@ -334,6 +382,35 @@ df1.groupby('year', as_index=False).agg({"Replication": "describe"})
 table=pd.pivot_table(df1,index='Journal',columns='year',values='Replication',aggfunc='mean')
 table['diff']=table[2021]-table[2020]
 table
+
+
+# # Visualising the SUM of TOP standards
+
+# In[12]:
+
+
+# Import new data - the sum of each TOP standard by year
+df4=pd.read_csv("TOP_sum.csv",thousands=',')
+df4.head()
+
+
+# In[17]:
+
+
+# What TOP standard performed the best? Total possible sum for each measure is 3x19 journals = 57 points for each TOP measure
+
+plt.figure(figsize=(10,12))
+sns.set_color_codes("colorblind")
+ax = sns.barplot(data=df4, x="TOP_sum", y="TOP standard", hue="year")
+plt.xlabel('Sum of TOP standards, total out of 57', fontsize=15)
+plt.xticks(fontsize=15)
+plt.ylabel('TOP standards', fontsize=15)
+plt.legend(title='year', title_fontsize=15, fontsize=15)
+degrees=0
+plt.yticks(fontsize=15, rotation=degrees)
+ax.set(xlim=(0, 60))
+
+plt.savefig("fig_TOP_sum.png", dpi=600)
 
 
 # # Analysis of COI scores from the International Committee of Medical Journal Editors (ICMJE) disclosure form 
@@ -349,9 +426,9 @@ df1.groupby('year', as_index=False).agg({"COI_total": "describe"})
 
 
 # sorting the order of the journals 
-df4 = df1.sort_values(by=['COI_total', 'Journal'],
+df5 = df1.sort_values(by=['COI_total', 'Journal'],
                       ascending=[False, True])
-df4.head()
+df5.head()
 
 
 # In[39]:
@@ -361,7 +438,7 @@ df4.head()
 
 plt.figure(figsize=(10,12))
 sns.set_color_codes("colorblind")
-ax = sns.barplot(data=df4, x="COI_total", y="Journal", hue="year")
+ax = sns.barplot(data=df5, x="COI_total", y="Journal", hue="year")
 plt.xlabel('Total COI scores, out of 4', fontsize=15)
 plt.xticks(fontsize=15)
 plt.ylabel('Journals', fontsize=15)
@@ -437,6 +514,12 @@ degrees=50
 plt.yticks(fontsize=11, rotation=degrees)
 
 plt.savefig("fig1_totalTOP.png", dpi=600)
+
+
+# In[18]:
+
+
+df1
 
 
 # In[ ]:
